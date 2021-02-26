@@ -1,0 +1,13 @@
+defmodule OrcidAdapter.Schemas.OrcidEducation do
+  use Ecto.Schema
+
+  schema "orcid_education" do
+    field :orcid, :string
+    field :pid, :string
+    field :affiliation, :string
+    field :department, :string
+    field :role, :string
+    field :start_date, :integer
+    field :end_date, :integer
+  end
+end

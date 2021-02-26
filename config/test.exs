@@ -1,13 +1,13 @@
 use Mix.Config
 
 config :orcid_adapter, OrcidAdapter.Repo,
-  hostname: "127.0.0.1",
-  port: "5432",
   username: "postgres",
   password: "",
-  database: "exida_dev",
-  show_sensitive_data_on_connection_error: false,
-  timeout: 60000
+  database: "exida_test",
+  show_sensitive_data_on_connection_error: true,
+  pool: Ecto.Adapters.SQL.Sandbox,
+  log: false,
+  loggers: []
 
 config :orcid_adapter,
   ecto_repos: [OrcidAdapter.Repo],

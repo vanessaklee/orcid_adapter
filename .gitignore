@@ -7,6 +7,13 @@
 # The directory Mix downloads your dependencies sources to.
 /deps/
 
+/config/*.exs
+
+/priv/
+
+*.csv
+*.txt
+
 # Where third-party dependencies like ExDoc output generated docs.
 /doc/
 
@@ -21,4 +28,5 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 orcid_adapter-*.tar
+.DS_Store
 
