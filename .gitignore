@@ -9,7 +9,7 @@
 
 /config/*.exs
 
-/priv/
+/priv/data/
 
 *.csv
 *.txt

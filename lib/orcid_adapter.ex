@@ -23,7 +23,7 @@ defmodule OrcidAdapter do
 
   @spec query_all_for_affiliation(String.t()) :: list()
   @doc """
-  Query OrcID for a single id.
+  Query OrcID for all ids associated with an affiliation.
   """
   def query_all_for_affiliation(affiliation) do
     ids = Affiliation.fetch_ids(affiliation, 0, 999)
@@ -36,7 +36,7 @@ defmodule OrcidAdapter do
 
   @spec save(list(), String.t()) :: list() | String.t()
   @doc """
-  Query OrcID for a single id.
+  Save OrcID records.
   """
   def save([], _pid), do: nil
   def save(nil, _pid), do: nil
@@ -59,7 +59,7 @@ defmodule OrcidAdapter do
 
   @spec map_record(String.t(), map()) :: map()
   @doc """
-  Query OrcID for a single id.
+  Map OrcID result record to db schema.
   """
   def map_record(id, record) do
     %{

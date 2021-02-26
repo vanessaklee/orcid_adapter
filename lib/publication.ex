@@ -36,8 +36,6 @@ defmodule OrcidAdapter.Publication do
   def save(orc_id, pid, record) do
     works = Map.get(record, :work)
     Enum.each(works, fn wk ->
-      y = to_string(Map.get(wk, :year))
-      year = if y, do: OrcidAdapter.to_integer(y), else: nil
       pubs = %OrcidAdapter.Schemas.OrcidPublications{
         orcid: orc_id,
         pid: pid,
@@ -46,10 +44,9 @@ defmodule OrcidAdapter.Publication do
         source: to_string(Map.get(wk, :source)),
         title: to_string(Map.get(wk, :title)),
         type: to_string(Map.get(wk, :type)),
-        year: year,
+        year: to_string(Map.get(wk, :year)) |> OrcidAdapter.to_integer() || nil
       }
-      Repo.insert(pubs,
-      on_conflict: :nothing)
+      Repo.insert(pubs, on_conflict: :nothing)
     end)
     orc_id
   end
