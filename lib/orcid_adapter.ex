@@ -2,7 +2,7 @@ defmodule OrcidAdapter do
   @moduledoc """
   Instantiate queries to OrcID.
   """
-  alias OrcidAdapter.{Orcid, Employment, Education, Publication, Affiliation}
+  alias OrcidAdapter.{Orcid, Employment, Education, Publication, Affiliation, Utils}
 
   @spec query(Atom.t(), String.t()) :: list()
   @doc """
@@ -32,6 +32,26 @@ defmodule OrcidAdapter do
       map_record(id, record)
     end)
     |> List.flatten()
+  end
+
+  @spec lookup(String.t()) :: list()
+  @doc """
+  Lookup an orcid record by pid.
+  """
+  def lookup(pid) do
+    personal_details = Orcid.lookup(pid)
+    education = Education.lookup(pid)
+    employment = Employment.lookup(pid)
+    publications = Publication.lookup(pid)
+
+    edu_emp = %{
+      affiliations: (employment.affiliation ++ education.affiliation) |> Utils.flatten_and_filter(),
+      departments: (employment.department ++ education.department) |> Utils.flatten_and_filter(),
+      dates: (employment.dates ++ education.dates) |> Utils.flatten_and_filter() |> Enum.sort(),
+      education_began: education.dates |> Enum.sort() |> List.first()
+    }
+
+    Map.merge(Map.merge(personal_details, edu_emp), publications)
   end
 
   @spec save(list(), String.t()) :: list() | String.t()
@@ -70,12 +90,4 @@ defmodule OrcidAdapter do
       work: Publication.details(record)
     }
   end
-
-  @spec to_integer(String.t()) :: Integer.t()
-  @doc """
-  Convert a string to integer. Used for years.
-  """
-  def to_integer(nil), do: nil
-  def to_integer(""), do: nil
-  def to_integer(str), do: String.to_integer(str)
 end

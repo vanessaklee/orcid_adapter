@@ -1,7 +1,13 @@
 defmodule OrcidAdapter.Publication do
   import SweetXml
-  alias OrcidAdapter.Repo
+  import Ecto.Query
+  alias OrcidAdapter.{Repo, Utils}
+  alias OrcidAdapter.Schemas.OrcidPublications, as: PublicationSchema
 
+  @spec details(String.t()) :: map()
+  @doc """
+  Pull details from an XML response record and assign them to a map representing the data for a publication.
+  """
   def details(record) do
     list = record |> xpath(~x"//activities:activities-summary/activities:works/activities:group"l)
 
@@ -33,10 +39,38 @@ defmodule OrcidAdapter.Publication do
     end)
   end
 
+  @spec lookup(String.t()) :: list()
+  @doc """
+  Lookup an record in the orcid_publications table by pid.
+  """
+  def lookup(pid) do
+    case Repo.all(where(PublicationSchema, ^[pid: pid])) do
+      [] -> nil
+      works ->
+        Enum.reduce(works, %{dois: []}, fn w, _ ->
+          external = w.external_ids
+          dois = Enum.reduce(external, [], fn e, acc2 ->
+            if Map.get(e, "type") == "doi" do
+              List.insert_at(acc2, -1, Map.get(e, "id"))
+            else
+              acc2
+            end
+          end)
+          %{
+            dois: dois
+          }
+        end)
+    end
+  end
+
+  @spec save(String.t(), String.t(), map()) :: String.t()
+  @doc """
+  Save OrcID record to orcid_publications table.
+  """
   def save(orc_id, pid, record) do
     works = Map.get(record, :work)
     Enum.each(works, fn wk ->
-      pubs = %OrcidAdapter.Schemas.OrcidPublications{
+      pubs = %PublicationSchema{
         orcid: orc_id,
         pid: pid,
         external_ids: Map.get(wk, :external_identifiers),
@@ -44,7 +78,7 @@ defmodule OrcidAdapter.Publication do
         source: to_string(Map.get(wk, :source)),
         title: to_string(Map.get(wk, :title)),
         type: to_string(Map.get(wk, :type)),
-        year: to_string(Map.get(wk, :year)) |> OrcidAdapter.to_integer() || nil
+        year: to_string(Map.get(wk, :year)) |> Utils.to_integer() || nil
       }
       Repo.insert(pubs, on_conflict: :nothing)
     end)

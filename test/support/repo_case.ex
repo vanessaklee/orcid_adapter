@@ -3,13 +3,14 @@ defmodule OrcidAdapter.RepoCase do
 
   using do
     quote do
-      alias MyApp.Repo
+      alias OrcidAdapter.Repo
 
       import Ecto
       import Ecto.Query
       import OrcidAdapter.RepoCase
 
-      # and any other stuff
+      alias OrcidAdapter.Utils
+      alias OrcidAdapter.Schemas.{Orcid, OrcidEducation, OrcidEmployment, OrcidPublications}
     end
   end
 

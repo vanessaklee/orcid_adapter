@@ -1,8 +1,13 @@
 defmodule OrcidAdapter.Orcid do
   import SweetXml
   import Ecto.Query
-  alias OrcidAdapter.Repo
+  alias OrcidAdapter.{Repo, Utils}
+  alias OrcidAdapter.Schemas.Orcid, as: OrcidSchema
 
+  @spec get(String.t()) :: String.t()
+  @doc """
+  Query OrcID for a record by id.
+  """
   def get(id) do
     token = Application.get_env(:orcid_adapter, :orcid_token)
     headers = [
@@ -14,6 +19,10 @@ defmodule OrcidAdapter.Orcid do
     resp.body
   end
 
+  @spec details(String.t()) :: map()
+  @doc """
+  Pull details from an XML response record and assign them to a map representing the data for personal details.
+  """
   def details(record) do
     list = record |> xpath(~x"//person:person"l)
 
@@ -60,10 +69,38 @@ defmodule OrcidAdapter.Orcid do
     end)
   end
 
+  @spec lookup(String.t()) :: list()
+  @doc """
+  Lookup an record in the orcid table by pid.
+  """
+  def lookup(pid) do
+    case Repo.all(where(OrcidSchema, ^[pid: pid])) do
+      nil -> nil
+      orcid ->
+        Enum.reduce(orcid, %{first_names: [], last_names: [], aka: []}, fn main, acc ->
+          first = [main.given_names, acc.first_names]
+            |> Utils.flatten_and_filter()
+          last = [main.family_name, acc.last_names]
+            |> Utils.flatten_and_filter()
+          aka = [main.other_names, main.credit_name, acc.aka]
+            |> Utils.flatten_and_filter()
+          %{
+            first_names: first,
+            last_names: last,
+            aka: aka
+          }
+        end)
+    end
+  end
+
+  @spec save(String.t(), String.t(), map()) :: String.t()
+  @doc """
+  Save OrcID record to orcid table.
+  """
   def save(orc_id, pid, record) do
     personal_details = Map.get(record, :personal_details)
     Enum.each(personal_details, fn pd ->
-      orcid = %OrcidAdapter.Schemas.Orcid{
+      orcid = %OrcidSchema{
         orcid: orc_id,
         pid: pid,
         external_ids: Map.get(pd, :external_identifiers),
