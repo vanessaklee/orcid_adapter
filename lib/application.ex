@@ -8,6 +8,6 @@ defmodule OrcidAdapter.Application do
       OrcidAdapter.Repo
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: Exida.Supervisor)
+    Supervisor.start_link(children, strategy: :one_for_one, name: OrcidAdapter.Supervisor)
   end
 end
