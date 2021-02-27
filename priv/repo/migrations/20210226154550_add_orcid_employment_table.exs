@@ -1,4 +1,4 @@
-defmodule OrcidAdapter.Repo.Migrations.AddOrcidEmploymentTable do
+defmodule Adapter.Repo.Migrations.AddOrcidEmploymentTable do
   use Ecto.Migration
 
   def change do

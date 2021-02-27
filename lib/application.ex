@@ -5,7 +5,7 @@ defmodule OrcidAdapter.Application do
 
   def start(_type, _args) do
     children = [
-      OrcidAdapter.Repo
+      Adapter.Repo
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: OrcidAdapter.Supervisor)

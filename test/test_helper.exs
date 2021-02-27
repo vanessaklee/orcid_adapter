@@ -1,3 +1,3 @@
-Ecto.Adapters.SQL.Sandbox.mode(OrcidAdapter.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(Adapter.Repo, :manual)
 
 ExUnit.start()

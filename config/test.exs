@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :orcid_adapter, OrcidAdapter.Repo,
+config :orcid_adapter, Adapter.Repo,
   username: "postgres",
   password: "",
   database: "exida_test",
@@ -10,7 +10,7 @@ config :orcid_adapter, OrcidAdapter.Repo,
   loggers: []
 
 config :orcid_adapter,
-  ecto_repos: [OrcidAdapter.Repo],
+  ecto_repos: [Adapter.Repo],
   cross_ref_id: "vanessa.lee@interfolio.com",
   orcid_client_id: "APP-GICM51RXINSQOGAB",
   orcid_client_secret: "141c5bc2-a579-4d65-acdf-cf05f2fe954c",

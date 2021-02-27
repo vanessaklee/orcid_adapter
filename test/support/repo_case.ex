@@ -1,13 +1,13 @@
-defmodule OrcidAdapter.RepoCase do
+defmodule Adapter.RepoCase do
   use ExUnit.CaseTemplate
 
   using do
     quote do
-      alias OrcidAdapter.Repo
+      alias Adapter.Repo
 
       import Ecto
       import Ecto.Query
-      import OrcidAdapter.RepoCase
+      import Adapter.RepoCase
 
       alias OrcidAdapter.Utils
       alias OrcidAdapter.Schemas.{Orcid, OrcidEducation, OrcidEmployment, OrcidPublications}
@@ -15,10 +15,10 @@ defmodule OrcidAdapter.RepoCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(OrcidAdapter.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Adapter.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(OrcidAdapter.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Adapter.Repo, {:shared, self()})
     end
 
     :ok

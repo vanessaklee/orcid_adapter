@@ -1,5 +1,5 @@
 defmodule OrcidAdapterTest do
-  use OrcidAdapter.RepoCase
+  use Adapter.RepoCase
   doctest OrcidAdapter
 
   @orcid_id "0000-0002-5572-8352" # Vanessa Lee test account
